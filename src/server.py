@@ -39,7 +39,17 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         make additional methods to organize the flow with which a request is handled by
         this method. But it all starts here!
         """
+        
+        msg = self.rfile.readline().strip()
+        print(msg)
+
         self.wfile.write(b"HTTP/1.1 200")
+
+    def setup(self):
+        return 
+    
+    def finish(self):
+        return
 
 
 if __name__ == "__main__":
