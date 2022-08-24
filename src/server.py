@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from cgitb import html
+from socket import socket
 import socketserver
+from urllib import request, response
+import requests
 import json
-
 
 """
 Written by: Raymon Skjørten Hansen
@@ -35,6 +37,18 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
     finish() - Does nothing by default, but is called after handle() to do any
     necessary clean up after a request is handled.
     """
+
+    def getReq(self):
+
+        httpMethod = {
+            "GET": "",
+            "PUT": "",
+            "POST": "",
+            "DELETE": "" 
+        }
+        pass
+
+
     def handle(self):
         """
         This method is responsible for handling an http-request. You can, and should(!),
@@ -42,11 +56,15 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         this method. But it all starts here!
         """
          
-
-        self.wfile.write(b"HTTP/1.1 200")
-        rLine = self.rfile.readline().strip()
-        print(rLine)
+        rLine = self.rfile.readline()
+        eleReq = rLine.split(b" ")
+        firstWord = eleReq[0]
+        print(firstWord)        
+        for line in rLine:
+            if line == b"\r\n":
+                break
         
+        self.wfile.write(b"HTTP/1.1 200")        
 
 
 
