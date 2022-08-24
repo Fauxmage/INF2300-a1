@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from cgitb import html
 import socketserver
+import json
 
 
 """
@@ -40,10 +41,13 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         make additional methods to organize the flow with which a request is handled by
         this method. But it all starts here!
         """
-        
+         
+
         self.wfile.write(b"HTTP/1.1 200")
         rLine = self.rfile.readline().strip()
         print(rLine)
+        
+
 
 
 
@@ -53,3 +57,4 @@ if __name__ == "__main__":
     with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
         print("Serving at: http://{}:{}".format(HOST, PORT))
         server.serve_forever()
+
