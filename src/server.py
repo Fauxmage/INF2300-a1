@@ -46,7 +46,7 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
             "POST": "",
             "DELETE": "" 
         }
-        pass
+        
 
 
     def handle(self):
@@ -64,7 +64,7 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
             if line == b"\r\n":
                 break
         
-        self.wfile.write(b"HTTP/1.1 200")        
+        self.wfile.write(b"HTTP/1.1 200")   
 
 
 
