@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from cgitb import html
-from socket import socket
+from http import client
+import socket
 import socketserver
 from urllib import request, response
 import requests
@@ -38,6 +39,11 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
     necessary clean up after a request is handled.
     """
 
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    #s.bind((HOST, PORT))    
+    s.listen(10)
+
     def getRequest(self):
 
         # Dictionary for HTTP methods
@@ -60,22 +66,43 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         rLine = self.rfile.readline()
         eleReq = rLine.split(b" ")
         firstWord = eleReq[0]
-        print(firstWord)
+        #print(firstWord)
 
         if firstWord == b"GET":
-            print("Fuck you GET") 
+            print("GET") 
         elif firstWord == b"PUT":
-            print("Ffuck you PUT")
+            print("PUT")
         elif firstWord == b"POST":
-            print("Fuck you POST") 
+            print("POST") 
         elif firstWord == b"DELETE":
-            print("Ffuck you DELETE")
+            print("DELETE")
 
         for line in rLine:
             if line == b"\r\n":
+                self.getRequest.httpMethod()
                 break
 
         self.wfile.write(b"HTTP/1.1 200") 
+
+        '''''
+        while True:
+            client_connection, client_address = s.accept()
+
+
+            request = client_connection.recv(1024).decode()
+            print(request)
+
+            fin = open('index.html')
+            content = fin.read()
+            fin.close()
+
+            response = 'HTTP/1.0 200 OK\n\n' + content
+            client_connection.sendall(response.encode())
+            client_connection.close()
+
+
+            s.close()   
+        '''''
 
 
     def post(self):
@@ -83,9 +110,14 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
 
     def get(self):
-        pass
 
-    
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        h = open("index.html", "rb")
+        self.wfile.write(h.read())
+
+
     def delete(self):
         pass
 
@@ -94,10 +126,6 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         pass
     
         
-               
-
-
-
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
     socketserver.TCPServer.allow_reuse_address = True
