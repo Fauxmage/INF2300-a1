@@ -46,6 +46,7 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
     def getRequest(self):
 
+        '''''
         # Dictionary for HTTP methods
         httpMethod = {
             "GET": self.get,
@@ -53,8 +54,7 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
             "POST": self.post,
             "DELETE": self.delete
         }
-
-
+        '''''
 
     def handle(self):
         """
@@ -77,9 +77,8 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         elif firstWord == b"DELETE":
             print("DELETE")
 
-    
-
         self.wfile.write(b"HTTP/1.1 200") 
+
 
     def post(self):
         pass
@@ -89,10 +88,14 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         print("Hello from GET")
 
         dict_resp =  { 
-            "id": "x",
+            "id": 1,
             "text": "test"
-                } 
+            } 
         json.dumps(dict_resp)
+
+        f = open("index.html", 'rb')
+        self.wfile.write(b"f")
+        
 
     def delete(self):
         pass
