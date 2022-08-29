@@ -66,10 +66,10 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         rLine = self.rfile.readline()
         eleReq = rLine.split(b" ")
         firstWord = eleReq[0]
-        #print(firstWord)
+
 
         if firstWord == b"GET":
-            print("GET") 
+            MyTCPHandler.get(self) 
         elif firstWord == b"PUT":
             print("PUT")
         elif firstWord == b"POST":
@@ -77,46 +77,22 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         elif firstWord == b"DELETE":
             print("DELETE")
 
-        for line in rLine:
-            if line == b"\r\n":
-                self.getRequest.httpMethod()
-                break
+    
 
         self.wfile.write(b"HTTP/1.1 200") 
-
-        '''''
-        while True:
-            client_connection, client_address = s.accept()
-
-
-            request = client_connection.recv(1024).decode()
-            print(request)
-
-            fin = open('index.html')
-            content = fin.read()
-            fin.close()
-
-            response = 'HTTP/1.0 200 OK\n\n' + content
-            client_connection.sendall(response.encode())
-            client_connection.close()
-
-
-            s.close()   
-        '''''
-
 
     def post(self):
         pass
 
 
     def get(self):
+        print("Hello from GET")
 
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-        h = open("index.html", "rb")
-        self.wfile.write(h.read())
-
+        dict_resp =  { 
+            "id": "x",
+            "text": "test"
+                } 
+        json.dumps(dict_resp)
 
     def delete(self):
         pass
