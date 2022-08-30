@@ -41,20 +41,17 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    #s.bind((HOST, PORT))    
+    # s.bind((HOST, PORT))    
     s.listen(10)
 
-    def getRequest(self):
+    payload = '''''
+    HTTP/1.1 200 OK
+    Host: localhost:8080
+    Content-Type: text/html
+    Content-Lengt: 4000
 
-        '''''
-        # Dictionary for HTTP methods
-        httpMethod = {
-            "GET": self.get,
-            "PUT": self.put,
-            "POST": self.post,
-            "DELETE": self.delete
-        }
-        '''''
+
+    '''''
 
     def handle(self):
         """
@@ -62,6 +59,7 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         make additional methods to organize the flow with which a request is handled by
         this method. But it all starts here!
         """
+        self.wfile.write(b"HTTP/1.1 200") 
 
         rLine = self.rfile.readline()
         eleReq = rLine.split(b" ")
@@ -71,35 +69,27 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         if firstWord == b"GET":
             MyTCPHandler.get(self) 
         elif firstWord == b"PUT":
-            print("PUT")
+            MyTCPHandler.put(self)
         elif firstWord == b"POST":
-            print("POST") 
+            MyTCPHandler.post(self)
         elif firstWord == b"DELETE":
-            print("DELETE")
+            MyTCPHandler.delete(self)
 
-        self.wfile.write(b"HTTP/1.1 200") 
-
+        #self.wfile.write(b"payload") 
 
     def post(self):
-        pass
+        print("Hello from POST")
 
 
     def get(self):
         print("Hello from GET")
-
-        dict_resp =  { 
-            "id": 1,
-            "text": "test"
-            } 
-        json.dumps(dict_resp)
-
-        f = open("index.html", 'rb')
-        self.wfile.write(b"f")
+        file = open("index.html", "rb")
+        self.wfile.write(b"payload" + file.read())
         
 
     def delete(self):
         pass
-
+    
 
     def put(self):
         pass
