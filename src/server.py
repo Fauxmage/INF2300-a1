@@ -59,12 +59,13 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         make additional methods to organize the flow with which a request is handled by
         this method. But it all starts here!
         """
+
         self.wfile.write(b"HTTP/1.1 200") 
 
+        # Seperate name of method and jump to HTTP method functions based upon request
         rLine = self.rfile.readline()
         eleReq = rLine.split(b" ")
         firstWord = eleReq[0]
-
 
         if firstWord == b"GET":
             MyTCPHandler.get(self) 
@@ -75,7 +76,6 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         elif firstWord == b"DELETE":
             MyTCPHandler.delete(self)
 
-        #self.wfile.write(b"payload") 
 
     def post(self):
         print("Hello from POST")
