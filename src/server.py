@@ -39,19 +39,10 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
     necessary clean up after a request is handled.
     """
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     # s.bind((HOST, PORT))    
-    s.listen(10)
-
-    payload = '''''
-    HTTP/1.1 200 OK
-    Host: localhost:8080
-    Content-Type: text/html
-    Content-Lengt: 4000
-
-
-    '''''
+    # s.listen(10)
 
     def handle(self):
         """
@@ -78,20 +69,41 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
 
     def post(self):
-        print("Hello from POST")
+        payload = '''''
+        HTTP/1.1 200 OK
+        Host: localhost:8080
+        Content-Type: application/json
+        Content-Lengt: 100
 
+
+        '''''
+        
+        print("POST works")
+
+        
 
     def get(self):
-        print("Hello from GET")
+        payload = '''''
+        HTTP/1.1 200 OK
+        Host: localhost:8080
+        Content-Type: text/html
+        Content-Lengt: 4000
+
+
+        '''''
+
+        print("GET works")
         file = open("index.html", "rb")
         self.wfile.write(b"payload" + file.read())
         
 
     def delete(self):
+        print("DELETE works")
         pass
     
 
     def put(self):
+        print("PUT works")
         pass
     
         
