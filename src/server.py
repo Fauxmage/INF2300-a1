@@ -69,21 +69,14 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
 
     def post(self):
-        payload = '''''
-        HTTP/1.1 200 OK
-        Host: localhost:8080
-        Content-Type: application/json
-        Content-Lengt: 100
-
-
-        '''''
-        
+        req = requests.post("http://localhost:8080 / POST", data = {"text": " "})
+        print(req.json)
         print("POST works")
 
         
 
     def get(self):
-        payload = '''''
+        self.payload = '''''
         HTTP/1.1 200 OK
         Host: localhost:8080
         Content-Type: text/html
@@ -94,7 +87,7 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
         print("GET works")
         file = open("index.html", "rb")
-        self.wfile.write(b"payload" + file.read())
+        self.wfile.write(b"self.payload" + file.read())
         
 
     def delete(self):
