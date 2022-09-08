@@ -87,10 +87,10 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         r = requests.post(url, data = json.dumps(data), headers = header)
         """""
         data = {
-            "text": "test"
+            "text": " "
         }
 
-        self.cont = json.loads(data)
+        self.cont = json.dumps(data)
         print(data)
         
 
