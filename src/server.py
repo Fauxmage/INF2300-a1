@@ -69,10 +69,29 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
 
     def post(self):
-        req = requests.post("http://localhost:8080 / POST", data = {"text": " "})
-        print(req.json)
         print("POST works")
 
+        """""
+        url = "http://localhost:8080"
+
+        header = {
+            "Content-Type": "application/json",
+            "Accept": "text/plain" 
+        }
+
+        data = {
+            "sender": "Ola",
+            "receiver": "Nordmann",
+            "message": "We did it!"
+        }
+        r = requests.post(url, data = json.dumps(data), headers = header)
+        """""
+        data = {
+            "text": "test"
+        }
+
+        self.cont = json.loads(data)
+        print(data)
         
 
     def get(self):
