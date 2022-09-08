@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from cgitb import html
+import cgitb
 from http import client
 import socket
 import socketserver
+from sqlite3 import connect
 from urllib import request, response
 import requests
 import json
@@ -39,11 +41,6 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
     necessary clean up after a request is handled.
     """
 
-    # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    # s.bind((HOST, PORT))    
-    # s.listen(10)
-
     def handle(self):
         """
         This method is responsible for handling an http-request. You can, and should(!),
@@ -69,29 +66,16 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
 
     def post(self):
+        self.wfile.write(b"HTTP/1.1 201") 
         print("POST works")
 
-        """""
-        url = "http://localhost:8080"
 
-        header = {
-            "Content-Type": "application/json",
-            "Accept": "text/plain" 
+        self.data = {
+            "text": ""
         }
 
-        data = {
-            "sender": "Ola",
-            "receiver": "Nordmann",
-            "message": "We did it!"
-        }
-        r = requests.post(url, data = json.dumps(data), headers = header)
-        """""
-        data = {
-            "text": " "
-        }
-
-        self.cont = json.dumps(data)
-        print(data)
+        rLines = self.rfile.read('Content-Length')
+        print(rLines)
         
 
     def get(self):
