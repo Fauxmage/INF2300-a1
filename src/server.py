@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
-from cgitb import html
-import cgitb
-from distutils.file_util import write_file
-from http import client
-import socket
+import os
+import sys
+import json
 import socketserver
-from sqlite3 import connect
+import urllib3
 from urllib import request, response
 import requests
-import json
 
 """
 Written by: Raymon Skjørten Hansen
@@ -18,47 +15,46 @@ UiT - The Arctic University of Norway
 May 9th, 2019
 """
 
-
-def post(self):
-    self.wfile.write(b"HTTP/1.1 201") 
-    print("POST works")
-    self.send_response(200)
-
-    self.data = {
-        "text": ""
-    }
-
-    rLines = self.rfile.read(int(350))
-    print(rLines)
-    return "rLines"
-
-
-def get(self):
-    self.payload = '''''
-    HTTP/1.1 200 OK
-    Host: localhost:8080
-    Content-Type: text/html
-    Content-Lengt: 4000
-
-
-    '''''
+def do_GET(self):
+    self.wfile.write(b"200")
 
     print("GET works")
     file = open("index.html", "rb")
-    self.wfile.write(b"self.payload" + file.read())
+    self.wfile.write(file.read())
 
 
-def delete(self):
-    print("DELETE works")
+def do_POST(self):
+
+    self.wfile.write(b"HTTP/1.1 200")
+    print("POST works")    
+    rLines = self.rfile.read(int(350))
+    rLine = self.rfile
+
+
+    for line in rLine:
+        
+        line.split(b" ")
+
+        with open('test.txt', 'a') as f:
+            f.write(line)     
+            
+        print(rLine)
+
+def GET_API(self):
     pass
 
 
-def put(self):
-    print("PUT works")
+def POST_API(self):
     pass
 
-def getRequest(self):
+
+def PUT_API(self):
     pass
+
+
+def DELETE_API(self):
+    pass
+
 
 
 
@@ -74,20 +70,16 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         """
 
 
-        self.wfile.write(b"HTTP/1.1 200") 
+        self.wfile.write(b"HTTP/1.1 200")
         # Seperate name of method and jump to HTTP method functions based upon request
         rLine = self.rfile.readline()
         eleReq = rLine.split(b" ")
         firstWord = eleReq[0]
 
         if firstWord == b"GET":
-            get(self) 
-        elif firstWord == b"PUT":
-            put(self)
+            do_GET(self) 
         elif firstWord == b"POST":
-            post(self)
-        elif firstWord == b"DELETE":
-            delete(self)
+            do_POST(self)
 
     
         
@@ -97,9 +89,6 @@ if __name__ == "__main__":
     with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
         print("Serving at: http://{}:{}".format(HOST, PORT))
         server.serve_forever()
-
-
-
 
 """
 This class is responsible for handling a request. The whole class is
