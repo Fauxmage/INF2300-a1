@@ -15,6 +15,29 @@ UiT - The Arctic University of Norway
 May 9th, 2019
 """
 
+
+def format_Request(rfile):
+    
+    http_req = {}
+
+    for i in rfile:
+
+        try: 
+            i = line.decode("ascii")
+
+        if len (http_req) == 0:
+            req_tuple = tuple(line.strip().split(" "))
+            http_req.update({"Request-Line":req_tuple})
+        else:
+            header = tuple(line.strip().split(": "))
+            http_req.update({header[0].title():header[1]})
+
+        if len < 2 or i == "\r\n":
+            break
+        
+    return http_req
+
+
 def do_GET(self):
     self.wfile.write(b"200")
 
@@ -68,10 +91,13 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         make additional methods to organize the flow with which a request is handled by
         this method. But it all starts here!
         """
-
+        rLine = format_Request(self.rfile)
 
         self.wfile.write(b"HTTP/1.1 200")
-        # Seperate name of method and jump to HTTP method functions based upon request
+
+
+        # Seperate name of method and jump to HTTP method functions based upon requests
+        """""
         rLine = self.rfile.readline()
         eleReq = rLine.split(b" ")
         firstWord = eleReq[0]
@@ -80,7 +106,7 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
             do_GET(self) 
         elif firstWord == b"POST":
             do_POST(self)
-
+        """""
     
         
 if __name__ == "__main__":
