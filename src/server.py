@@ -14,32 +14,7 @@ May 9th, 2019
 """
 
 class MyTCPHandler(socketserver.StreamRequestHandler):
-    """
-    This class is responsible for handling a request. The whole class is
-    handed over as a parameter to the server instance so that it is capable
-    of processing request. The server will use the handle-method to do this.
-    It is instantiated once for each request!
-    Since it inherits from the StreamRequestHandler class, it has two very
-    usefull attributes you can use:
-
-    rfile - This is the whole content of the request, displayed as a python
-    file-like object. This means we can do readline(), readlines() on it!
-
-    
-
-    wfile - This is a file-like object which represents the response. We can
-    write to it with write(). When we do wfile.close(), the response is
-    automatically sent.
-
-    The class has three important methods:
-    handle() - is called to handle each request.
-    setup() - Does nothing by default, but can be used to do any initial
-    tasks before handling a request. Is automatically called before handle().
-    finish() - Does nothing by default, but is called after handle() to do any
-    necessary clean up after a request is handled.
-    """
-    
-
+ 
     def get_request(self):
         
         if(self.data_split[1] == "/index.html" or self.data_split[1] == "/" ):
@@ -173,15 +148,15 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         responsee = status_line + content_type + content_lenght + y
       
         self.request.sendall(responsee.encode("utf-8"))
+    
+    def setup(self):
+        return super().setup()
                  
 
     def handle(self):
        
-
         """" data has the request from the client """
         self.data = self.request.recv(1024).strip().decode("utf-8")
-       # print(self.data)
-       
       
 
         self.data_split = self.data.split(" ")
@@ -208,6 +183,33 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
         
       
         self.wfile.close()
+    
+    def finish(self):
+        return super().finish()
+    """
+    This class is responsible for handling a request. The whole class is
+    handed over as a parameter to the server instance so that it is capable
+    of processing request. The server will use the handle-method to do this.
+    It is instantiated once for each request!
+    Since it inherits from the StreamRequestHandler class, it has two very
+    usefull attributes you can use:
+
+    rfile - This is the whole content of the request, displayed as a python
+    file-like object. This means we can do readline(), readlines() on it!
+
+    
+
+    wfile - This is a file-like object which represents the response. We can
+    write to it with write(). When we do wfile.close(), the response is
+    automatically sent.
+
+    The class has three important methods:
+    handle() - is called to handle each request.
+    setup() - Does nothing by default, but can be used to do any initial
+    tasks before handling a request. Is automatically called before handle().
+    finish() - Does nothing by default, but is called after handle() to do any
+    necessary clean up after a request is handled.
+    """
 
         
 
