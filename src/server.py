@@ -15,177 +15,111 @@ May 9th, 2019
 
 class MyTCPHandler(socketserver.StreamRequestHandler):
  
-    def get_request(self):
-        
-        if(self.data_split[1] == "/index.html" or self.data_split[1] == "/" ):
-           
-            file = open("index.html")
-            # convert the file into string
-            file_string = file.read()
-            
-          
+    def do_GET(self):
 
+        if(self.reqSplit[1] == "/index.html" or self.reqSplit[1] == "/" ):
+            file = open("index.html")
+
+            # Convert into string
+            fString = file.read()
             status_line = "HTTP/1.1 200 - OK\n"
             content_type = "Content-Type: text/html\n"
-            content_lenght = "Content-Lenght: {} \n\n".format(len(file_string))
-          
-            responsee = status_line + content_type + content_lenght + file_string
-         
-          
-            
-            self.request.sendall(responsee.encode("utf-8"))
-
-          
-
-        elif(self.data_split[1] == "/server.py"):
-            status_line = "HTTP/1.1 403 - Forbidden\n"
-            content_type = "Content-Type: text/html\n"
-            content_lenght = "Content-Lenght: NA \n\n"
-            responsee = status_line + content_type + content_lenght
-            self.request.sendall(responsee.encode("utf-8"))
-          
-            
-
-        else:
-            status_line = "HTTP/1.1 404 - Not Found\n"
-            content_type = "Content-Type: text/html\n"
-            content_lenght = "Content-Lenght: NA \n\n"
-            responsee = status_line + content_type + content_lenght
-            self.request.sendall(responsee.encode("utf-8"))
-
+            content_lenght = "Content-Lenght: {} \n\n".format(len(fString))
+            retMsg = (status_line + content_type + content_lenght + fString)
+            self.request.sendall(retMsg.encode("utf-8"))
     
-    def put_request(self):
+    def do_PUT(self):
 
-        """ retrieving the txt input """
-        self.data_split_text = self.data.split("text=")[1] 
-        with open("test.txt", "a") as f:
-            f.write(self.data_split_text + "\n")
+        # Get .txt data
+        self.data_split_text = self.reqData.split("text=")[1] 
+        with open("test.txt", "a") as file:
+            file.write(self.data_split_text + "\n")
             
-        with open("test.txt") as f:
-            sfile_string = f.read()
-
-      
+        with open("test.txt") as file:
+            sfile_string = file.read()
 
         status_line = "HTTP/1.1 200 - OK\n"
         content_type = "Content-Type: text/html\n"
         content_lenght = "Content-Lenght: {} \n\n".format(len(sfile_string))
           
-        responsee = status_line + content_type + content_lenght + sfile_string
-        self.request.sendall(responsee.encode("utf-8")) 
+        retMsg = (status_line + content_type + content_lenght + sfile_string)
+        self.request.sendall(retMsg.encode("utf-8")) 
        
             
-              
+    def api_GET(self):
 
-    def get_json_handler(self):
+        # Convert to dict
+        with open("messages.json", "r") as file:
+            data = json.load(file)
 
-        # converts the json object into a python dictionary
-
-        with open("messages.json", "r") as f:
-            data = json.load(f)
-
-        
-
-        y = str(data["messages"]) 
+        # Response
+        res = str(data["messages"]) 
        
         status_line = "HTTP/1.1 200 - OK\n"
         content_type = "Content-Type: text/html\n"
-        content_lenght = "Content-Lenght: {} \n\n".format(len(y))
-        responsee = status_line + content_type + content_lenght + y
+        content_lenght = "Content-Lenght: {} \n\n".format(len(res))
+        retMsg = (status_line + content_type + content_lenght + res)
       
-        self.request.sendall(responsee.encode("utf-8"))
+        self.request.sendall(retMsg.encode("utf-8"))
       
-         
-         
-             
-    def call_forbidden(self):
-
-        status_line = "HTTP/1.1 403 - Forbidden\n"
-        content_type = "Content-Type: text/html\n"
-        content_lenght = "Content-Lenght: NA \n\n"
-        responsee = status_line + content_type + content_lenght
-        self.request.sendall(responsee.encode("utf-8"))
-
     
-    def post_json_handler(self):
+    def apiPOST(self):
 
+        with open("messages.json", "r") as file:
+            data = json.load(file)
+
+        # Get last object from messages 
+        objVar = data["messages"][-1]['id']    
       
-
-        with open("messages.json", "r") as f:
-            data = json.load(f)
-
-        #getting the last object from the list data["messages"]
-        var = data["messages"][-1]['id']    
-      
-
-        #new id
-        new_id = var + 1
-
-        start = self.data.find('{')
-        end = self.data.find('}', start)
-        self.substring = self.data[start:end + 1]
-        res = json.loads(self.substring)
-
-        #new text
-        new_text = res["text"]
-        #new object
-        res.update( {'id' : new_id} )
-
-    
-
-        data["messages"].append(res)
+        #New message ID
+        newID = objVar + 1
+        req_beg = self.reqData.find('{')
+        req_end = self.reqData.find('}', req_beg)
+        self.secString = self.reqData[req_beg:req_end + 1]
+        ret = json.loads(self.secString)
+        newText = ret["text"]
         
-        with open("messages.json", "w") as f:
-            json.dump(data,f, indent=2)
+        # New object 
+        newText.update( {'id' : newID} )
+        data["messages"].append(ret)
+        with open("messages.json", "w") as file:
+            json.dump(data, file, indent = 1)
 
-   
-
-        # sending the response
-        y = str(res) 
+        # Response
+        res = str(ret) 
        
         status_line = "HTTP/1.1 200 - OK\n"
         content_type = "Content-Type: application/json\n"
-        content_lenght = "Content-Lenght: {} \n\n".format(len(y))
-        responsee = status_line + content_type + content_lenght + y
+        content_lenght = "Content-Lenght: {} \n\n".format(len(res))
+        retMsg = (status_line + content_type + content_lenght + res)
       
-        self.request.sendall(responsee.encode("utf-8"))
+        self.request.sendall(retMsg.encode("utf-8"))
     
+
     def setup(self):
-        return super().setup()
+        socketserver.StreamRequestHandler.setup(self)
                  
 
     def handle(self):
-       
-        """" data has the request from the client """
-        self.data = self.request.recv(1024).strip().decode("utf-8")
-      
+        self.wfile.write(b"HTTP/1.1 200")
 
-        self.data_split = self.data.split(" ")
-        
-        if(self.data_split[0] == "GET" and self.data_split[1] != "/messages" ):
-            self.get_request()
+        # Formatting for getting HTTP request
+        self.reqData = self.request.recv(1024).strip().decode("utf-8")
+        self.reqSplit = self.reqData.split(" ")
+        if(self.reqSplit[0] == "GET" and self.reqSplit[1] != "/messages" ):
+            self.do_GET()
+        if(self.reqSplit[0] == "GET" and self.reqSplit[1] == "/messages" ):
+            self.api_GET()   
+        if(self.reqSplit[0] == "POST" and self.reqSplit[1] == "/test.txt" ):
+            self.do_PUT()
+        if(self.reqSplit[0] == "POST" and self.reqSplit[1] == "/messages" ):
+            self.apiPOST()    
 
-        if(self.data_split[0] == "GET" and self.data_split[1] == "/messages" ):
-            self.get_json_handler()   
-
-        if(self.data_split[0] == "POST" and self.data_split[1] == "/test.txt" ):
-            self.put_request()
-
-        if(self.data_split[0] == "POST" and self.data_split[1] == "/messages" ):
-            self.post_json_handler()    
-
-      #  a post request to any other file is not allowed
-        if(self.data_split[0] == "POST" and  self.data_split[1] != "/messages" ):
-           # self.call_forbidden()
-            if(self.data_split[0] == "POST" and self.data_split[1] != "/test.txt" ):    
-                self.call_forbidden()
-         
-
-        
-      
         self.wfile.close()
+
     
     def finish(self):
-        return super().finish()
+        socketserver.StreamRequestHandler.finish(self)
     """
     This class is responsible for handling a request. The whole class is
     handed over as a parameter to the server instance so that it is capable
@@ -217,10 +151,6 @@ if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
-        try:
-            print("Serving at: http://{}:{}".format(HOST, PORT))
-            server.serve_forever()
-        except KeyboardInterrupt:
-            server.shutdown()
-            print("\nShutting down...")
+        print("Serving at: http://{}:{}".format(HOST, PORT))
+        server.serve_forever()
 
